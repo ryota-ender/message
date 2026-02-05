@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="ja">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -12,71 +11,92 @@
       --ink: #2c2c2c;
       --accent: #d07a55;
       --muted: #6f6f6f;
+      --line: #e6d7c8;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
       background: radial-gradient(1200px 800px at 10% 10%, #fff7ef 0%, #f7f3ee 45%, #f2ede6 100%);
       color: var(--ink);
     }
-
     header {
       padding: 32px 20px 10px;
       text-align: center;
     }
-
     header h1 {
       margin: 0;
       font-size: 28px;
       letter-spacing: 0.08em;
     }
-
     main {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 20px;
     }
-
     .panel {
       background: var(--card);
-      border: 1px solid #eadfd5;
+      border: 1px solid var(--line);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .hint { font-size: 13px; color: var(--muted); }
+    .hidden { display: none; }
+
+    /* 名前メニュー */
+    .menu-title {
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      color: #4d3a2d;
+    }
+    .menu-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .menu-item {
+      background: #fffdfb;
+      border: 1px dashed #e2cfc0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      font-size: 15px;
+    }
+    .menu-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+    .menu-item.active {
+      border: 2px solid var(--accent);
+      background: #fff6ef;
     }
 
+    /* パスワード入力 */
     .field {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin: 12px 0;
+      align-items: center;
     }
-
     label {
       width: 100%;
       font-size: 14px;
       color: var(--muted);
     }
-
-    input,
-    button,
-    select {
+    input, button {
       font-size: 16px;
       padding: 10px 12px;
-      border: 1px solid #d8cbbb;
       border-radius: 10px;
     }
-
-    input,
-    select {
+    input {
+      border: 1px solid #d8cbbb;
       flex: 1;
     }
-
     button {
       background: var(--accent);
       color: white;
@@ -84,46 +104,28 @@
       cursor: pointer;
       padding: 10px 16px;
     }
+    button:hover { opacity: 0.92; }
+    .error { color: #b43333; margin-top: 8px; }
 
-    button:hover {
-      opacity: 0.92;
-    }
-
-    .hint {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
+    /* メッセージ */
     .messages {
       margin-top: 20px;
       display: grid;
       gap: 12px;
     }
-
     .msg {
       background: #fffdfb;
       border: 1px dashed #e2cfc0;
       border-radius: 12px;
       padding: 14px 16px;
     }
-
     .msg .from {
       font-weight: bold;
       color: #5d3d2b;
       margin-bottom: 6px;
     }
-
-    .hidden {
-      display: none;
-    }
-
-    .error {
-      color: #b43333;
-      margin-top: 8px;
-    }
   </style>
 </head>
-
 <body>
   <header>
     <h1>卒業寄せ書き</h1>
@@ -131,25 +133,28 @@
 
   <main>
     <section class="panel" id="loginPanel">
-      <div class="field">
-        <label for="guestName">ゲスト名</label>
-        <select id="guestName"></select>
+      <div class="menu-title">名前を選んでください</div>
+      <div class="menu-list" id="menuList"></div>
+
+      <div id="passwordArea" class="hidden">
+        <div class="field">
+          <label>選択中</label>
+          <div id="selectedName" style="font-weight:bold;"></div>
+        </div>
+        <div class="field">
+          <label for="password">パスワード</label>
+          <input id="password" type="password" placeholder="0000" />
+          <button id="loginBtn">ログイン</button>
+        </div>
+        <div class="hint">※ ここでは全員パスワードは 0000 です</div>
+        <div class="error hidden" id="errorMsg">名前またはパスワードが違います。</div>
       </div>
-      <div class="field">
-        <label for="password">パスワード</label>
-        <input id="password" type="password" placeholder="0000" />
-      </div>
-      <div class="field">
-        <button id="loginBtn">ログイン</button>
-      </div>
-      <div class="hint">※ ここでは全員パスワードは 0000 です</div>
-      <div class="error hidden" id="errorMsg">名前またはパスワードが違います。</div>
     </section>
 
     <section class="panel hidden" id="messagesPanel">
-      <div class="field" style="justify-content: space-between; align-items: center;">
+      <div class="field" style="justify-content: space-between;">
         <div id="welcome"></div>
-        <button id="logoutBtn">ログアウト</button>
+        <button id="logoutBtn">別の名前でログイン</button>
       </div>
       <div class="messages" id="messagesList"></div>
     </section>
@@ -209,24 +214,41 @@
       ["グンジ ハヤト", "店長", "ラストまでありがとう。元気でな！"]
     ];
 
-    // --- UI ---
-    const guestName = document.getElementById("guestName");
-    const password = document.getElementById("password");
+    const menuList = document.getElementById("menuList");
+    const passwordArea = document.getElementById("passwordArea");
+    const selectedNameEl = document.getElementById("selectedName");
+    const passwordInput = document.getElementById("password");
     const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
     const errorMsg = document.getElementById("errorMsg");
+
     const loginPanel = document.getElementById("loginPanel");
     const messagesPanel = document.getElementById("messagesPanel");
     const messagesList = document.getElementById("messagesList");
     const welcome = document.getElementById("welcome");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    // 名前一覧をセット
-    Object.keys(GUEST_PASSWORDS).forEach(name => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      guestName.appendChild(opt);
-    });
+    let selectedName = null;
+
+    function renderMenu() {
+      menuList.innerHTML = "";
+      Object.keys(GUEST_PASSWORDS).forEach(name => {
+        const btn = document.createElement("button");
+        btn.className = "menu-item";
+        btn.type = "button";
+        btn.textContent = name;
+        btn.addEventListener("click", () => {
+          selectedName = name;
+          [...menuList.children].forEach(el => el.classList.remove("active"));
+          btn.classList.add("active");
+          selectedNameEl.textContent = name;
+          passwordArea.classList.remove("hidden");
+          errorMsg.classList.add("hidden");
+          passwordInput.value = "";
+          passwordInput.focus();
+        });
+        menuList.appendChild(btn);
+      });
+    }
 
     function showMessagesFor(name) {
       messagesList.innerHTML = "";
@@ -244,27 +266,28 @@
     }
 
     loginBtn.addEventListener("click", () => {
-      const name = guestName.value;
-      const pass = password.value.trim();
-      const expected = GUEST_PASSWORDS[name];
+      const pass = passwordInput.value.trim();
+      const expected = selectedName ? GUEST_PASSWORDS[selectedName] : null;
 
-      if (expected && pass === expected) {
+      if (selectedName && pass === expected) {
         errorMsg.classList.add("hidden");
         loginPanel.classList.add("hidden");
         messagesPanel.classList.remove("hidden");
-        welcome.textContent = `${name} さんへのメッセージ`;
-        showMessagesFor(name);
+        welcome.textContent = `${selectedName} さんへのメッセージ`;
+        showMessagesFor(selectedName);
       } else {
         errorMsg.classList.remove("hidden");
       }
     });
 
     logoutBtn.addEventListener("click", () => {
-      password.value = "";
       messagesPanel.classList.add("hidden");
       loginPanel.classList.remove("hidden");
+      passwordInput.value = "";
+      errorMsg.classList.add("hidden");
     });
+
+    renderMenu();
   </script>
 </body>
-
 </html>
