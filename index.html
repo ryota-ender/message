@@ -5,124 +5,153 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>寄せ書き</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Shippori+Mincho:wght@400;600&display=swap");
+
     :root {
-      --bg: #f7f3ee;
-      --card: #ffffff;
-      --ink: #2c2c2c;
+      --wood-1: #6b4a2b;
+      --wood-2: #4f351f;
+      --board: #2f3a32;
+      --chalk: #f5efe6;
       --accent: #d07a55;
-      --muted: #6f6f6f;
-      --line: #e6d7c8;
+      --muted: #e7dccb;
+      --line: rgba(245,239,230,0.35);
     }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
-      background: radial-gradient(1200px 800px at 10% 10%, #fff7ef 0%, #f7f3ee 45%, #f2ede6 100%);
-      color: var(--ink);
+      color: var(--chalk);
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 6px, rgba(0,0,0,0.03) 6px 12px),
+        linear-gradient(135deg, var(--wood-1), var(--wood-2));
+      font-family: "Shippori Mincho", "Noto Serif JP", serif;
+      min-height: 100vh;
     }
+
     header {
-      padding: 32px 20px 10px;
       text-align: center;
+      padding: 28px 16px 8px;
     }
     header h1 {
       margin: 0;
-      font-size: 28px;
       letter-spacing: 0.08em;
+      font-size: 30px;
     }
+
     main {
-      max-width: 920px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 16px 20px 40px;
     }
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+
+    .board {
+      background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(255,255,255,0.05), transparent 60%),
+        var(--board);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      border: 8px solid #7b5532;
+      position: relative;
     }
+    .board:before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .menu-title {
+      font-family: "Klee One", "Noto Serif JP", serif;
+      font-size: 18px;
+      margin-bottom: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .menu-item {
+      width: 100%;
+      text-align: left;
+      font-family: "Klee One", "Noto Serif JP", serif;
+      font-size: 17px;
+      color: var(--chalk);
+      background: transparent;
+      border: none;
+      padding: 8px 10px;
+      border-bottom: 1px dashed var(--line);
+      cursor: pointer;
+      transition: transform 0.08s ease, color 0.08s ease;
+    }
+    .menu-item:hover {
+      transform: translateX(4px);
+      color: #fff7ee;
+    }
+    .menu-item.active {
+      color: #ffe1c9;
+    }
+
     .hint { font-size: 13px; color: var(--muted); }
     .hidden { display: none; }
 
-    /* 名前メニュー */
-    .menu-title {
-      font-size: 16px;
-      letter-spacing: 0.06em;
-      margin-bottom: 10px;
-      color: #4d3a2d;
-    }
-    .menu-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-    }
-    .menu-item {
-      background: #fffdfb;
-      border: 1px dashed #e2cfc0;
-      border-radius: 12px;
-      padding: 12px 14px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
-      font-size: 15px;
-    }
-    .menu-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    }
-    .menu-item.active {
-      border: 2px solid var(--accent);
-      background: #fff6ef;
-    }
-
-    /* パスワード入力 */
     .field {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin: 12px 0;
       align-items: center;
+      margin: 10px 0;
     }
     label {
       width: 100%;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
     }
     input, button {
       font-size: 16px;
       padding: 10px 12px;
       border-radius: 10px;
+      font-family: "Klee One", "Noto Serif JP", serif;
     }
     input {
       border: 1px solid #d8cbbb;
       flex: 1;
+      color: #2b2b2b;
     }
-    button {
+    button.action {
       background: var(--accent);
       color: white;
       border: none;
       cursor: pointer;
       padding: 10px 16px;
     }
-    button:hover { opacity: 0.92; }
-    .error { color: #b43333; margin-top: 8px; }
+    button.action:hover { opacity: 0.92; }
 
-    /* メッセージ */
+    .error { color: #ffb0b0; margin-top: 8px; }
+
     .messages {
-      margin-top: 20px;
+      margin-top: 14px;
       display: grid;
       gap: 12px;
     }
     .msg {
-      background: #fffdfb;
-      border: 1px dashed #e2cfc0;
+      background: rgba(255,255,255,0.04);
+      border: 1px dashed rgba(255,255,255,0.2);
       border-radius: 12px;
       padding: 14px 16px;
     }
     .msg .from {
       font-weight: bold;
-      color: #5d3d2b;
+      color: #ffe1c9;
       margin-bottom: 6px;
+      font-family: "Klee One", "Noto Serif JP", serif;
     }
   </style>
 </head>
@@ -132,7 +161,7 @@
   </header>
 
   <main>
-    <section class="panel" id="loginPanel">
+    <section class="board" id="loginPanel">
       <div class="menu-title">名前を選んでください</div>
       <div class="menu-list" id="menuList"></div>
 
@@ -144,24 +173,23 @@
         <div class="field">
           <label for="password">パスワード</label>
           <input id="password" type="password" placeholder="0000" />
-          <button id="loginBtn">ログイン</button>
+          <button class="action" id="loginBtn">ログイン</button>
         </div>
         <div class="hint">※ ここでは全員パスワードは 0000 です</div>
         <div class="error hidden" id="errorMsg">名前またはパスワードが違います。</div>
       </div>
     </section>
 
-    <section class="panel hidden" id="messagesPanel">
+    <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
       <div class="field" style="justify-content: space-between;">
         <div id="welcome"></div>
-        <button id="logoutBtn">別の名前でログイン</button>
+        <button class="action" id="logoutBtn">別の名前でログイン</button>
       </div>
       <div class="messages" id="messagesList"></div>
     </section>
   </main>
 
   <script>
-    // ▼▼▼ 設定エリア：パスワード ▼▼▼
     const GUEST_PASSWORDS = {
       "ヒロイシ カイト": "0000",
       "タナカ ルイト": "0000",
@@ -176,8 +204,6 @@
       "グンジ ハヤト": "0000"
     };
 
-    // ▼▼▼ 設定エリア：寄せ書きデータ ▼▼▼
-    // [ 宛先, 差出人, メッセージ ]
     const MESSAGES_DATA = [
       ["ヒロイシ カイト", "店長", "卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。"],
       ["ヒロイシ カイト", "スタッフA", "ヒロイシさんのおかげで楽しかったです！お元気で！高橋！！！"],
@@ -189,27 +215,17 @@
       ["ヒロイシ カイト", "スタッフG", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
       ["ヒロイシ カイト", "スタッフH", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
       ["ヒロイシ カイト", "スタッフI", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-
       ["タナカ ルイト", "キッチン担当", "忙しい時の手際の良さ、尊敬してました。卒業おめでとうございます。"],
       ["タナカ ルイト", "後輩A", "色々教えてくれてありがとうございました！"],
-
       ["ミヤシタ ケント", "ホール長", "丁寧な接客、いつも頼りにしてました。就職しても頑張ってね！"],
-
       ["カトウ タクミ", "店長", "シフトにたくさん入ってくれて本当に助かりました。ありがとう！"],
-
       ["エンドウ モモカ", "同期メンバー", "モモカちゃん卒業さみしい！またご飯行こうね。"],
       ["エンドウ モモカ", "後輩B", "いつも優しくフォローしてくれて嬉しかったです。"],
-
       ["サトウ トモカ", "店長", "いつも笑顔で接客してくれて、お客様からの評判も最高でした。ありがとう！"],
-
       ["タベ ユキノ", "スタッフC", "ユキノさん、卒業おめでとうございます！ラストシフトお疲れ様でした。"],
-
       ["クマクラ キエ", "同期一同", "キエちゃんお疲れ様！社会人になっても応援してるよー！"],
-
       ["カバサワ ミホ", "店長", "真面目に仕事に取り組む姿勢、素晴らしかったです。次のステージでも頑張って！"],
-
       ["スガタ マチ", "後輩D", "マチさんの教え方すごく分かりやすかったです。ありがとうございました！"],
-
       ["グンジ ハヤト", "キッチン一同", "ハヤト、お疲れ！また店に顔出しに来いよー！"],
       ["グンジ ハヤト", "店長", "ラストまでありがとう。元気でな！"]
     ];
