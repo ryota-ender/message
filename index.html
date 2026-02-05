@@ -8,19 +8,20 @@
     @import url("https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Shippori+Mincho:wght@400;600&display=swap");
 
     :root {
-      --wood-1: #6b4a2b;
-      --wood-2: #4f351f;
-      --board: #2f3a32;
-      --chalk: #f5efe6;
-      --accent: #d07a55;
-      --muted: #e7dccb;
-      --line: rgba(245,239,230,0.35);
+      --wood-1: #6a4a2f;
+      --wood-2: #3f2a1a;
+      --paper: #fff7ec;
+      --paper-shadow: #f0e1cf;
+      --ink: #3b2b21;
+      --accent: #c86b43;
+      --line: #d9c7b1;
+      --muted: #7a6454;
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      color: var(--chalk);
+      color: var(--ink);
       background:
         linear-gradient(120deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
         repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 6px, rgba(0,0,0,0.03) 6px 12px),
@@ -28,79 +29,112 @@
       font-family: "Shippori Mincho", "Noto Serif JP", serif;
       min-height: 100vh;
     }
+    body.modal-open { overflow: hidden; }
 
     header {
       text-align: center;
-      padding: 28px 16px 8px;
+      padding: 26px 16px 8px;
     }
     header h1 {
       margin: 0;
       letter-spacing: 0.08em;
-      font-size: 30px;
+      font-size: 28px;
+      color: #f8efe6;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
     }
 
     main {
-      max-width: 860px;
+      max-width: 560px;
       margin: 0 auto;
-      padding: 16px 20px 40px;
+      padding: 10px 16px 32px;
     }
 
     .board {
-      background:
-        radial-gradient(1200px 800px at 10% 10%, rgba(255,255,255,0.05), transparent 60%),
-        var(--board);
+      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-shadow) 100%);
       border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-      border: 8px solid #7b5532;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      border: 2px solid #d1b899;
       position: relative;
     }
     .board:before {
       content: "";
       position: absolute;
-      inset: 6px;
-      border: 1px solid rgba(255,255,255,0.08);
+      inset: 8px;
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 12px;
       pointer-events: none;
     }
 
     .menu-title {
       font-family: "Klee One", "Noto Serif JP", serif;
-      font-size: 18px;
-      margin-bottom: 12px;
+      font-size: 17px;
+      margin-bottom: 10px;
       letter-spacing: 0.06em;
+      text-align: center;
     }
 
     .menu-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 6px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
     }
 
-    .menu-item {
-      width: 100%;
-      text-align: left;
-      font-family: "Klee One", "Noto Serif JP", serif;
-      font-size: 17px;
-      color: var(--chalk);
+    .dish-item {
+      width: clamp(220px, 72vw, 320px);
+      aspect-ratio: 1 / 1;
+      position: relative;
       background: transparent;
       border: none;
-      padding: 8px 10px;
-      border-bottom: 1px dashed var(--line);
+      padding: 0;
       cursor: pointer;
-      transition: transform 0.08s ease, color 0.08s ease;
+      transition: transform 0.08s ease, filter 0.08s ease;
     }
-    .menu-item:hover {
-      transform: translateX(4px);
-      color: #fff7ee;
+    .dish-item img {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
-    .menu-item.active {
-      color: #ffe1c9;
+    .dish-item:hover { transform: translateY(-2px); }
+    .dish-item:active { transform: scale(0.98); }
+    .dish-item:focus-visible { outline: 3px solid rgba(200,107,67,0.5); border-radius: 50%; }
+
+    .dish-name {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      font-family: "Klee One", "Noto Serif JP", serif;
+      font-size: clamp(16px, 4.6vw, 22px);
+      color: var(--ink);
+      text-shadow: 0 1px 6px rgba(255,255,255,0.8);
+      pointer-events: none;
     }
 
-    .hint { font-size: 13px; color: var(--muted); }
+    .dish-item--small {
+      width: clamp(190px, 64vw, 280px);
+    }
+
+    .hint { font-size: 12px; color: var(--muted); text-align: center; }
     .hidden { display: none; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    #welcome {
+      font-size: 16px;
+      font-family: "Klee One", "Noto Serif JP", serif;
+    }
 
     .field {
       display: flex;
@@ -124,6 +158,7 @@
       border: 1px solid #d8cbbb;
       flex: 1;
       color: #2b2b2b;
+      background: #fff;
     }
     button.action {
       background: var(--accent);
@@ -131,10 +166,19 @@
       border: none;
       cursor: pointer;
       padding: 10px 16px;
+      box-shadow: 0 6px 12px rgba(200,107,67,0.2);
     }
     button.action:hover { opacity: 0.92; }
 
-    .error { color: #ffb0b0; margin-top: 8px; }
+    .error { color: #b2362e; margin-top: 8px; font-size: 13px; }
+
+    .sender-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
     .modal {
       position: fixed;
@@ -149,25 +193,24 @@
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.5);
       backdrop-filter: blur(2px);
     }
     .modal-card {
       position: relative;
       width: min(520px, 92vw);
-      background:
-        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.05), transparent 60%),
-        var(--board);
+      background: linear-gradient(180deg, var(--paper) 0%, var(--paper-shadow) 100%);
       border-radius: 16px;
-      padding: 18px 18px 16px;
-      border: 6px solid #7b5532;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      padding: 16px;
+      border: 2px solid #d1b899;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      color: var(--ink);
     }
     .modal-card:before {
       content: "";
       position: absolute;
-      inset: 6px;
-      border: 1px solid rgba(255,255,255,0.08);
+      inset: 8px;
+      border: 1px solid rgba(0,0,0,0.08);
       border-radius: 12px;
       pointer-events: none;
     }
@@ -175,17 +218,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-family: "Klee One", "Noto Serif JP", serif;
     }
     .modal-title {
-      font-size: 18px;
+      font-size: 17px;
       letter-spacing: 0.06em;
     }
     .modal-close {
       background: transparent;
       border: none;
-      color: var(--chalk);
+      color: var(--ink);
       font-size: 22px;
       cursor: pointer;
       padding: 4px 8px;
@@ -201,22 +244,14 @@
       margin-top: 10px;
     }
 
-    .messages {
-      margin-top: 14px;
-      display: grid;
-      gap: 12px;
-    }
-    .msg {
-      background: rgba(255,255,255,0.04);
-      border: 1px dashed rgba(255,255,255,0.2);
+    .message-text {
+      background: #fff;
+      border: 1px dashed var(--line);
       border-radius: 12px;
-      padding: 14px 16px;
-    }
-    .msg .from {
-      font-weight: bold;
-      color: #ffe1c9;
-      margin-bottom: 6px;
-      font-family: "Klee One", "Noto Serif JP", serif;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -227,16 +262,18 @@
 
   <main>
     <section class="board" id="loginPanel">
-      <div class="menu-title">名前を選んでください</div>
+      <div class="menu-title">お名前を選んでください</div>
       <div class="menu-list" id="menuList"></div>
+      <div class="hint">お皿をタップしてパスワードを入力してください</div>
     </section>
 
     <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
-      <div class="field" style="justify-content: space-between;">
+      <div class="panel-head">
         <div id="welcome"></div>
-        <button class="action" id="logoutBtn">閉じる</button>
+        <button class="action" id="logoutBtn">名前一覧へ戻る</button>
       </div>
-      <div class="messages" id="messagesList"></div>
+      <div class="menu-title">メッセージを送ってくれた人</div>
+      <div class="sender-list" id="messagesList"></div>
     </section>
   </main>
 
@@ -258,6 +295,23 @@
       </div>
       <div class="modal-actions">
         <button class="action" id="modalLoginBtn">ログイン</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="messageModal" aria-hidden="true">
+    <div class="modal-backdrop" id="messageBackdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="messageTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="messageTitle">メッセージ</div>
+        <button class="modal-close" id="messageClose" aria-label="閉じる">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-name" id="messageFrom"></div>
+        <div class="message-text" id="messageBody"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="action" id="messageOk">閉じる</button>
       </div>
     </div>
   </div>
@@ -304,6 +358,12 @@
     ];
 
     const menuList = document.getElementById("menuList");
+    const loginPanel = document.getElementById("loginPanel");
+    const messagesPanel = document.getElementById("messagesPanel");
+    const messagesList = document.getElementById("messagesList");
+    const welcome = document.getElementById("welcome");
+    const logoutBtn = document.getElementById("logoutBtn");
+
     const modal = document.getElementById("passwordModal");
     const modalBackdrop = document.getElementById("modalBackdrop");
     const modalClose = document.getElementById("modalClose");
@@ -312,41 +372,71 @@
     const modalLoginBtn = document.getElementById("modalLoginBtn");
     const modalError = document.getElementById("modalError");
 
-    const loginPanel = document.getElementById("loginPanel");
-    const messagesPanel = document.getElementById("messagesPanel");
-    const messagesList = document.getElementById("messagesList");
-    const welcome = document.getElementById("welcome");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const messageModal = document.getElementById("messageModal");
+    const messageBackdrop = document.getElementById("messageBackdrop");
+    const messageClose = document.getElementById("messageClose");
+    const messageOk = document.getElementById("messageOk");
+    const messageFrom = document.getElementById("messageFrom");
+    const messageBody = document.getElementById("messageBody");
 
     let selectedName = null;
 
-    function openModal(name) {
+    function setBodyModal(open) {
+      if (open) {
+        document.body.classList.add("modal-open");
+      } else {
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    function openPasswordModal(name) {
       selectedName = name;
       modalName.textContent = name;
       modalPassword.value = "";
       modalError.classList.add("hidden");
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
+      setBodyModal(true);
       modalPassword.focus();
     }
 
-    function closeModal() {
+    function closePasswordModal() {
       modal.classList.add("hidden");
       modal.setAttribute("aria-hidden", "true");
+      setBodyModal(false);
+    }
+
+    function openMessageModal(from, message) {
+      messageFrom.textContent = `${from} さんより`;
+      messageBody.textContent = message;
+      messageModal.classList.remove("hidden");
+      messageModal.setAttribute("aria-hidden", "false");
+      setBodyModal(true);
+    }
+
+    function closeMessageModal() {
+      messageModal.classList.add("hidden");
+      messageModal.setAttribute("aria-hidden", "true");
+      setBodyModal(false);
+    }
+
+    function createDishButton(name, onClick, small) {
+      const btn = document.createElement("button");
+      btn.className = small ? "dish-item dish-item--small" : "dish-item";
+      btn.type = "button";
+      btn.setAttribute("aria-label", name);
+      btn.innerHTML = `
+        <img src="images/dish.png" alt="" aria-hidden="true" />
+        <span class="dish-name">${name}</span>
+      `;
+      btn.addEventListener("click", onClick);
+      return btn;
     }
 
     function renderMenu() {
       menuList.innerHTML = "";
       Object.keys(GUEST_PASSWORDS).forEach(name => {
-        const btn = document.createElement("button");
-        btn.className = "menu-item";
-        btn.type = "button";
-        btn.textContent = name;
-        btn.addEventListener("click", () => {
-          [...menuList.children].forEach(el => el.classList.remove("active"));
-          btn.classList.add("active");
-          openModal(name);
-        });
+        const btn = createDishButton(name, () => openPasswordModal(name), false);
         menuList.appendChild(btn);
       });
     }
@@ -359,10 +449,8 @@
         return;
       }
       items.forEach(([to, from, message]) => {
-        const card = document.createElement("div");
-        card.className = "msg";
-        card.innerHTML = `<div class="from">${from} さんより</div><div>${message}</div>`;
-        messagesList.appendChild(card);
+        const btn = createDishButton(from, () => openMessageModal(from, message), true);
+        messagesList.appendChild(btn);
       });
     }
 
@@ -372,7 +460,7 @@
 
       if (selectedName && pass === expected) {
         modalError.classList.add("hidden");
-        closeModal();
+        closePasswordModal();
         loginPanel.classList.add("hidden");
         messagesPanel.classList.remove("hidden");
         welcome.textContent = `${selectedName} さんへのメッセージ`;
@@ -390,18 +478,26 @@
         attemptLogin();
       }
     });
-    modalBackdrop.addEventListener("click", closeModal);
-    modalClose.addEventListener("click", closeModal);
+    modalBackdrop.addEventListener("click", closePasswordModal);
+    modalClose.addEventListener("click", closePasswordModal);
+
+    messageBackdrop.addEventListener("click", closeMessageModal);
+    messageClose.addEventListener("click", closeMessageModal);
+    messageOk.addEventListener("click", closeMessageModal);
+
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
-        closeModal();
+      if (event.key === "Escape") {
+        if (!modal.classList.contains("hidden")) {
+          closePasswordModal();
+        } else if (!messageModal.classList.contains("hidden")) {
+          closeMessageModal();
+        }
       }
     });
 
     logoutBtn.addEventListener("click", () => {
       messagesPanel.classList.add("hidden");
       loginPanel.classList.remove("hidden");
-      [...menuList.children].forEach(el => el.classList.remove("active"));
       selectedName = null;
     });
 
