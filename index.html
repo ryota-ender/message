@@ -142,7 +142,9 @@
     }
 
     .dish-item--small {
-      width: clamp(190px, 64vw, 280px);
+      width: 100%;
+      max-width: 240px;
+      justify-self: center;
     }
 
     .hint { font-size: 12px; color: var(--muted); text-align: center; }
@@ -198,9 +200,8 @@
     .error { color: #b2362e; margin-top: 8px; font-size: 13px; }
 
     .sender-list {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       margin-top: 12px;
     }
@@ -314,7 +315,6 @@
           <label for="modalPassword">パスワード</label>
           <input id="modalPassword" type="password" placeholder="0000" />
         </div>
-        <div class="hint">※ ここでは全員パスワードは 0000 です</div>
         <div class="error hidden" id="modalError">名前またはパスワードが違います。</div>
       </div>
       <div class="modal-actions">
