@@ -75,7 +75,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 18px;
+      margin-bottom: 6px;
     }
 
     .menu-item {
@@ -136,6 +136,71 @@
 
     .error { color: #ffb0b0; margin-top: 8px; }
 
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .modal.hidden { display: none; }
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+    }
+    .modal-card {
+      position: relative;
+      width: min(520px, 92vw);
+      background:
+        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.05), transparent 60%),
+        var(--board);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      border: 6px solid #7b5532;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    }
+    .modal-card:before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-family: "Klee One", "Noto Serif JP", serif;
+    }
+    .modal-title {
+      font-size: 18px;
+      letter-spacing: 0.06em;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--chalk);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .modal-name {
+      font-family: "Klee One", "Noto Serif JP", serif;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
     .messages {
       margin-top: 14px;
       display: grid;
@@ -157,37 +222,45 @@
 </head>
 <body>
   <header>
-    <h1>Congratulations message</h1>
+    <h1>卒業寄せ書き</h1>
   </header>
 
   <main>
     <section class="board" id="loginPanel">
       <div class="menu-title">名前を選んでください</div>
       <div class="menu-list" id="menuList"></div>
-
-      <div id="passwordArea" class="hidden">
-        <div class="field">
-          <label>選択中</label>
-          <div id="selectedName" style="font-weight:bold;"></div>
-        </div>
-        <div class="field">
-          <label for="password">パスワード</label>
-          <input id="password" type="password" placeholder="0000" />
-          <button class="action" id="loginBtn">ログイン</button>
-        </div>
-        <div class="hint">※ ここでは全員パスワードは 0000 です</div>
-        <div class="error hidden" id="errorMsg">名前またはパスワードが違います。</div>
-      </div>
     </section>
 
     <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
       <div class="field" style="justify-content: space-between;">
         <div id="welcome"></div>
-        <button class="action" id="logoutBtn">別の名前でログイン</button>
+        <button class="action" id="logoutBtn">閉じる</button>
       </div>
       <div class="messages" id="messagesList"></div>
     </section>
   </main>
+
+  <div class="modal hidden" id="passwordModal" aria-hidden="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">パスワード入力</div>
+        <button class="modal-close" id="modalClose" aria-label="閉じる">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-name" id="modalName"></div>
+        <div class="field">
+          <label for="modalPassword">パスワード</label>
+          <input id="modalPassword" type="password" placeholder="0000" />
+        </div>
+        <div class="hint">※ ここでは全員パスワードは 0000 です</div>
+        <div class="error hidden" id="modalError">名前またはパスワードが違います。</div>
+      </div>
+      <div class="modal-actions">
+        <button class="action" id="modalLoginBtn">ログイン</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const GUEST_PASSWORDS = {
@@ -231,19 +304,35 @@
     ];
 
     const menuList = document.getElementById("menuList");
-    const passwordArea = document.getElementById("passwordArea");
-    const selectedNameEl = document.getElementById("selectedName");
-    const passwordInput = document.getElementById("password");
-    const loginBtn = document.getElementById("loginBtn");
-    const errorMsg = document.getElementById("errorMsg");
+    const modal = document.getElementById("passwordModal");
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalClose = document.getElementById("modalClose");
+    const modalName = document.getElementById("modalName");
+    const modalPassword = document.getElementById("modalPassword");
+    const modalLoginBtn = document.getElementById("modalLoginBtn");
+    const modalError = document.getElementById("modalError");
 
-    const loginPanel = document.getElementById("loginPanel");
     const messagesPanel = document.getElementById("messagesPanel");
     const messagesList = document.getElementById("messagesList");
     const welcome = document.getElementById("welcome");
     const logoutBtn = document.getElementById("logoutBtn");
 
     let selectedName = null;
+
+    function openModal(name) {
+      selectedName = name;
+      modalName.textContent = name;
+      modalPassword.value = "";
+      modalError.classList.add("hidden");
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      modalPassword.focus();
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      modal.setAttribute("aria-hidden", "true");
+    }
 
     function renderMenu() {
       menuList.innerHTML = "";
@@ -253,14 +342,9 @@
         btn.type = "button";
         btn.textContent = name;
         btn.addEventListener("click", () => {
-          selectedName = name;
           [...menuList.children].forEach(el => el.classList.remove("active"));
           btn.classList.add("active");
-          selectedNameEl.textContent = name;
-          passwordArea.classList.remove("hidden");
-          errorMsg.classList.add("hidden");
-          passwordInput.value = "";
-          passwordInput.focus();
+          openModal(name);
         });
         menuList.appendChild(btn);
       });
@@ -281,26 +365,41 @@
       });
     }
 
-    loginBtn.addEventListener("click", () => {
-      const pass = passwordInput.value.trim();
+    function attemptLogin() {
+      const pass = modalPassword.value.trim();
       const expected = selectedName ? GUEST_PASSWORDS[selectedName] : null;
 
       if (selectedName && pass === expected) {
-        errorMsg.classList.add("hidden");
-        loginPanel.classList.add("hidden");
+        modalError.classList.add("hidden");
+        closeModal();
         messagesPanel.classList.remove("hidden");
         welcome.textContent = `${selectedName} さんへのメッセージ`;
         showMessagesFor(selectedName);
+        messagesPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
-        errorMsg.classList.remove("hidden");
+        modalError.classList.remove("hidden");
+      }
+    }
+
+    modalLoginBtn.addEventListener("click", attemptLogin);
+    modalPassword.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        attemptLogin();
+      }
+    });
+    modalBackdrop.addEventListener("click", closeModal);
+    modalClose.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeModal();
       }
     });
 
     logoutBtn.addEventListener("click", () => {
       messagesPanel.classList.add("hidden");
-      loginPanel.classList.remove("hidden");
-      passwordInput.value = "";
-      errorMsg.classList.add("hidden");
+      [...menuList.children].forEach(el => el.classList.remove("active"));
+      selectedName = null;
     });
 
     renderMenu();
