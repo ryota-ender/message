@@ -78,9 +78,34 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
+
+    .menu-item {
+      width: min(360px, 86vw);
+      text-align: center;
+      font-family: "Klee One", "Noto Serif JP", serif;
+      font-size: 18px;
+      color: var(--ink);
+      background: transparent;
+      border: none;
+      padding: 10px 12px;
+      cursor: pointer;
+      position: relative;
+    }
+    .menu-item:after {
+      content: \"\";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,43,33,0.35), transparent);
+    }
+    .menu-item:hover { color: #2a1f18; }
+    .menu-item:active { transform: scale(0.98); }
+    .menu-item:focus-visible { outline: 3px solid rgba(200,107,67,0.35); border-radius: 10px; }
 
     .dish-item {
       width: clamp(220px, 72vw, 320px);
@@ -264,7 +289,7 @@
     <section class="board" id="loginPanel">
       <div class="menu-title">お名前を選んでください</div>
       <div class="menu-list" id="menuList"></div>
-      <div class="hint">お皿をタップしてパスワードを入力してください</div>
+      <div class="hint">名前をタップしてパスワードを入力してください</div>
     </section>
 
     <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
@@ -433,10 +458,20 @@
       return btn;
     }
 
+    function createMenuButton(name, onClick) {
+      const btn = document.createElement("button");
+      btn.className = "menu-item";
+      btn.type = "button";
+      btn.textContent = name;
+      btn.setAttribute("aria-label", name);
+      btn.addEventListener("click", onClick);
+      return btn;
+    }
+
     function renderMenu() {
       menuList.innerHTML = "";
       Object.keys(GUEST_PASSWORDS).forEach(name => {
-        const btn = createDishButton(name, () => openPasswordModal(name), false);
+        const btn = createMenuButton(name, () => openPasswordModal(name));
         menuList.appendChild(btn);
       });
     }
