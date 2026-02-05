@@ -162,6 +162,11 @@
       font-size: 16px;
       font-family: "Klee One", "Noto Serif JP", serif;
     }
+    .panel-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
 
     .field {
       display: flex;
@@ -278,6 +283,9 @@
       font-size: 15px;
       line-height: 1.6;
       white-space: pre-wrap;
+      max-height: 45vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
   </style>
 </head>
@@ -295,10 +303,12 @@
     <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
       <div class="panel-head">
         <div id="welcome"></div>
-        <button class="action" id="logoutBtn">名前一覧へ戻る</button>
       </div>
       <div class="menu-title">メッセージを送ってくれた人</div>
       <div class="sender-list" id="messagesList"></div>
+      <div class="panel-footer">
+        <button class="action" id="logoutBtn">名前一覧へ戻る</button>
+      </div>
     </section>
   </main>
 
@@ -356,7 +366,7 @@
     };
 
     const MESSAGES_DATA = [
-      ["ヒロイシ カイト", "店長", "卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"],
+      ["ヒロイシ カイト", "店長", "卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。"],
       ["ヒロイシ カイト", "スタッフA", "ヒロイシさんのおかげで楽しかったです！お元気で！高橋！！！"],
       ["ヒロイシ カイト", "スタッフB", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
       ["ヒロイシ カイト", "スタッフC", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
