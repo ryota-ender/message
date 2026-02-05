@@ -148,6 +148,7 @@
     }
 
     .hint { font-size: 12px; color: var(--muted); text-align: center; }
+    .hint.error { color: #b2362e; }
     .hidden { display: none; }
 
     .panel-head {
@@ -298,6 +299,8 @@
     <section class="board" id="loginPanel">
       <div class="menu-title">Thank you for everything!</div>
       <div class="menu-list" id="menuList"></div>
+      <div class="hint">名前をタップしてパスワードを入力してください</div>
+      <div class="hint" id="loadStatus" role="status"></div>
     </section>
 
     <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
@@ -351,6 +354,8 @@
   </div>
 
   <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwDTSBwfNzipfy0xwlHdBAEdOrB-fHOtqJS9fmXjM0ClkgIwllgjo09YItSRmGDe8M2/exec";
+
     const GUEST_PASSWORDS = {
       "ヒロイシ カイト": "0000",
       "タナカ ルイト": "0000",
@@ -365,31 +370,8 @@
       "グンジ ハヤト": "0000"
     };
 
-    const MESSAGES_DATA = [
-      ["ヒロイシ カイト", "店長", "卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。卒業おめでとう！ムードメーカーとして店を盛り上げてくれてありがとう。"],
-      ["ヒロイシ カイト", "スタッフA", "ヒロイシさんのおかげで楽しかったです！お元気で！高橋！！！"],
-      ["ヒロイシ カイト", "スタッフB", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフC", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフD", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフE", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフF", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフG", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフH", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["ヒロイシ カイト", "スタッフI", "ヒロイシさんのおかげで楽しかったです！お元気で！"],
-      ["タナカ ルイト", "キッチン担当", "忙しい時の手際の良さ、尊敬してました。卒業おめでとうございます。"],
-      ["タナカ ルイト", "後輩A", "色々教えてくれてありがとうございました！"],
-      ["ミヤシタ ケント", "ホール長", "丁寧な接客、いつも頼りにしてました。就職しても頑張ってね！"],
-      ["カトウ タクミ", "店長", "シフトにたくさん入ってくれて本当に助かりました。ありがとう！"],
-      ["エンドウ モモカ", "同期メンバー", "モモカちゃん卒業さみしい！またご飯行こうね。"],
-      ["エンドウ モモカ", "後輩B", "いつも優しくフォローしてくれて嬉しかったです。"],
-      ["サトウ トモカ", "店長", "いつも笑顔で接客してくれて、お客様からの評判も最高でした。ありがとう！"],
-      ["タベ ユキノ", "スタッフC", "ユキノさん、卒業おめでとうございます！ラストシフトお疲れ様でした。"],
-      ["クマクラ キエ", "同期一同", "キエちゃんお疲れ様！社会人になっても応援してるよー！"],
-      ["カバサワ ミホ", "店長", "真面目に仕事に取り組む姿勢、素晴らしかったです。次のステージでも頑張って！"],
-      ["スガタ マチ", "後輩D", "マチさんの教え方すごく分かりやすかったです。ありがとうございました！"],
-      ["グンジ ハヤト", "キッチン一同", "ハヤト、お疲れ！また店に顔出しに来いよー！"],
-      ["グンジ ハヤト", "店長", "ラストまでありがとう。元気でな！"]
-    ];
+    let messagesByRecipient = {};
+    let loadError = false;
 
     const menuList = document.getElementById("menuList");
     const loginPanel = document.getElementById("loginPanel");
@@ -397,6 +379,7 @@
     const messagesList = document.getElementById("messagesList");
     const welcome = document.getElementById("welcome");
     const logoutBtn = document.getElementById("logoutBtn");
+    const loadStatus = document.getElementById("loadStatus");
 
     const modal = document.getElementById("passwordModal");
     const modalBackdrop = document.getElementById("modalBackdrop");
@@ -414,6 +397,77 @@
     const messageBody = document.getElementById("messageBody");
 
     let selectedName = null;
+
+    function setLoadStatus(message, isError) {
+      if (!loadStatus) {
+        return;
+      }
+      loadStatus.textContent = message;
+      loadStatus.classList.toggle("error", Boolean(isError));
+    }
+
+    function normalizeMessages(raw) {
+      if (!raw) {
+        return [];
+      }
+      let list = [];
+      if (Array.isArray(raw)) {
+        list = raw;
+      } else if (Array.isArray(raw.messages)) {
+        list = raw.messages;
+      } else {
+        return [];
+      }
+
+      if (list.length && Array.isArray(list[0])) {
+        return list.map((row) => ({
+          to: String(row[0] || "").trim(),
+          from: String(row[1] || "").trim(),
+          message: String(row[2] || "").trim()
+        })).filter((item) => item.to && item.from && item.message);
+      }
+
+      return list.map((item) => {
+        const toValue = item.to || item.toName || item["宛先"] || item["宛先名"] || "";
+        const fromValue = item.from || item.fromName || item["差出人"] || item["送信者"] || item["送信者名"] || "";
+        const messageValue = item.message || item.text || item["メッセージ"] || item["本文"] || "";
+        return {
+          to: String(toValue).trim(),
+          from: String(fromValue).trim(),
+          message: String(messageValue).trim()
+        };
+      }).filter((item) => item.to && item.from && item.message);
+    }
+
+    function buildMessagesMap(messages) {
+      return messages.reduce((acc, item) => {
+        if (!acc[item.to]) {
+          acc[item.to] = [];
+        }
+        acc[item.to].push(item);
+        return acc;
+      }, {});
+    }
+
+    async function loadMessages() {
+      setLoadStatus("メッセージを読み込み中...");
+      try {
+        const response = await fetch(GAS_URL, { method: "GET" });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const raw = await response.json();
+        const messages = normalizeMessages(raw);
+        messagesByRecipient = buildMessagesMap(messages);
+        loadError = false;
+        setLoadStatus("");
+      } catch (error) {
+        loadError = true;
+        messagesByRecipient = {};
+        setLoadStatus("メッセージの読み込みに失敗しました。", true);
+      }
+      renderMenu();
+    }
 
     function setBodyModal(open) {
       if (open) {
@@ -487,12 +541,18 @@
 
     function showMessagesFor(name) {
       messagesList.innerHTML = "";
-      const items = MESSAGES_DATA.filter(m => m[0] === name);
+      if (loadError) {
+        messagesList.innerHTML = "<div class='hint error'>メッセージの読み込みに失敗しました。ページを再読み込みしてください。</div>";
+        return;
+      }
+      const items = messagesByRecipient[name] || [];
       if (!items.length) {
         messagesList.innerHTML = "<div class='hint'>メッセージはまだありません。</div>";
         return;
       }
-      items.forEach(([to, from, message]) => {
+      items.forEach((item) => {
+        const from = item.from;
+        const message = item.message;
         const btn = createDishButton(from, () => openMessageModal(from, message), true);
         messagesList.appendChild(btn);
       });
@@ -545,7 +605,7 @@
       selectedName = null;
     });
 
-    renderMenu();
+    loadMessages();
   </script>
 </body>
 </html>
