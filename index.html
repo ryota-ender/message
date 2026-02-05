@@ -312,6 +312,7 @@
     const modalLoginBtn = document.getElementById("modalLoginBtn");
     const modalError = document.getElementById("modalError");
 
+    const loginPanel = document.getElementById("loginPanel");
     const messagesPanel = document.getElementById("messagesPanel");
     const messagesList = document.getElementById("messagesList");
     const welcome = document.getElementById("welcome");
@@ -372,10 +373,11 @@
       if (selectedName && pass === expected) {
         modalError.classList.add("hidden");
         closeModal();
+        loginPanel.classList.add("hidden");
         messagesPanel.classList.remove("hidden");
         welcome.textContent = `${selectedName} さんへのメッセージ`;
         showMessagesFor(selectedName);
-        messagesPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         modalError.classList.remove("hidden");
       }
@@ -398,6 +400,7 @@
 
     logoutBtn.addEventListener("click", () => {
       messagesPanel.classList.add("hidden");
+      loginPanel.classList.remove("hidden");
       [...menuList.children].forEach(el => el.classList.remove("active"));
       selectedName = null;
     });
