@@ -354,22 +354,10 @@
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwDTSBwfNzipfy0xwlHdBAEdOrB-fHOtqJS9fmXjM0ClkgIwllgjo09YItSRmGDe8M2/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwUGXYP1pCfRr4kbGyfwPiQDCyqZDX9wQ8GNjCSc7n9-_sfin9WWKh29B_ZKYhSza6Y/exec";
 
-    const GUEST_PASSWORDS = {
-      "ヒロイシ カイト": "0000",
-      "タナカ ルイト": "0000",
-      "ミヤシタ ケント": "0000",
-      "カトウ タクミ": "0000",
-      "エンドウ モモカ": "0000",
-      "サトウ トモカ": "0000",
-      "タベ ユキノ": "0000",
-      "クマクラ キエ": "0000",
-      "カバサワ ミホ": "0000",
-      "スガタ マチ": "0000",
-      "グンジ ハヤト": "0000"
-    };
-
+    let guestPasswords = {};
+    let memberNames = [];
     let messagesByRecipient = {};
     let loadError = false;
 
@@ -404,6 +392,36 @@
       }
       loadStatus.textContent = message;
       loadStatus.classList.toggle("error", Boolean(isError));
+    }
+
+    function normalizeMembers(raw) {
+      if (!raw) {
+        return [];
+      }
+      let list = [];
+      if (Array.isArray(raw)) {
+        list = raw;
+      } else if (Array.isArray(raw.members)) {
+        list = raw.members;
+      } else {
+        return [];
+      }
+
+      if (list.length && Array.isArray(list[0])) {
+        return list.map((row) => ({
+          name: String(row[0] || "").trim(),
+          password: String(row[1] || "").trim()
+        })).filter((item) => item.name);
+      }
+
+      return list.map((item) => {
+        const nameValue = item.name || item["名前"] || item["ゲスト名"] || "";
+        const passwordValue = item.password || item.pass || item["パスワード"] || "";
+        return {
+          name: String(nameValue).trim(),
+          password: String(passwordValue).trim()
+        };
+      }).filter((item) => item.name);
     }
 
     function normalizeMessages(raw) {
@@ -449,22 +467,34 @@
       }, {});
     }
 
-    async function loadMessages() {
-      setLoadStatus("メッセージを読み込み中...");
+    async function loadData() {
+      setLoadStatus("データを読み込み中...");
       try {
         const response = await fetch(GAS_URL, { method: "GET" });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
         const raw = await response.json();
+        const members = normalizeMembers(raw);
         const messages = normalizeMessages(raw);
+        guestPasswords = members.reduce((acc, member) => {
+          acc[member.name] = member.password || "";
+          return acc;
+        }, {});
+        memberNames = members.map((member) => member.name);
         messagesByRecipient = buildMessagesMap(messages);
         loadError = false;
-        setLoadStatus("");
+        if (!members.length) {
+          setLoadStatus("名前一覧が読み込めませんでした。", true);
+        } else {
+          setLoadStatus("");
+        }
       } catch (error) {
         loadError = true;
         messagesByRecipient = {};
-        setLoadStatus("メッセージの読み込みに失敗しました。", true);
+        guestPasswords = {};
+        memberNames = [];
+        setLoadStatus("データの読み込みに失敗しました。", true);
       }
       renderMenu();
     }
@@ -533,7 +563,12 @@
 
     function renderMenu() {
       menuList.innerHTML = "";
-      Object.keys(GUEST_PASSWORDS).forEach(name => {
+      const names = memberNames.length ? memberNames : Object.keys(guestPasswords);
+      if (!names.length) {
+        menuList.innerHTML = "<div class='hint error'>名前一覧がありません。</div>";
+        return;
+      }
+      names.forEach((name) => {
         const btn = createMenuButton(name, () => openPasswordModal(name));
         menuList.appendChild(btn);
       });
@@ -560,7 +595,7 @@
 
     function attemptLogin() {
       const pass = modalPassword.value.trim();
-      const expected = selectedName ? GUEST_PASSWORDS[selectedName] : null;
+      const expected = selectedName ? guestPasswords[selectedName] : null;
 
       if (selectedName && pass === expected) {
         modalError.classList.add("hidden");
@@ -605,7 +640,7 @@
       selectedName = null;
     });
 
-    loadMessages();
+    loadData();
   </script>
 </body>
 </html>
