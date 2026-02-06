@@ -156,7 +156,7 @@
       grid-column: 1 / -1;
       display: flex;
       justify-content: center;
-      margin: -6px 0 -2px;
+      margin: -10px 0 -4px;
     }
     .drink-item img {
       width: min(60px, 18vw);
@@ -247,8 +247,8 @@
     .sender-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 4px 12px;
-      margin-top: 8px;
+      gap: 2px 12px;
+      margin-top: 6px;
     }
 
     .modal {
@@ -599,8 +599,8 @@
 
     function applyRandomTilt(element, side) {
       const base = side === "left"
-        ? { x: -6, y: 4, min: -2.6, max: -0.6 }
-        : { x: 6, y: -4, min: 0.6, max: 2.6 };
+        ? { x: -6, y: 4, min: -5.5, max: -1.5 }
+        : { x: 6, y: -4, min: 1.5, max: 5.5 };
       const tilt = (Math.random() * (base.max - base.min) + base.min).toFixed(2);
       const jitterX = (Math.random() * 2 - 1).toFixed(2);
       const jitterY = (Math.random() * 2 - 1).toFixed(2);
