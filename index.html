@@ -117,10 +117,9 @@
       cursor: pointer;
       --offset-x: 0px;
       --offset-y: 0px;
-      --tilt: 0deg;
       --raise: 0px;
       --scale: 1;
-      transform: translate(var(--offset-x), calc(var(--offset-y) - var(--raise))) rotate(var(--tilt)) scale(var(--scale));
+      transform: translate(var(--offset-x), calc(var(--offset-y) - var(--raise))) scale(var(--scale));
       transition: transform 0.08s ease, filter 0.08s ease;
     }
     .dish-item img {
@@ -247,8 +246,8 @@
     .sender-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 2px 12px;
-      margin-top: 6px;
+      gap: 0px 12px;
+      margin-top: 4px;
     }
 
     .modal {
@@ -597,14 +596,12 @@
       return btn;
     }
 
-    function applyRandomTilt(element, side) {
+    function applyRandomShift(element, side) {
       const base = side === "left"
-        ? { x: -6, y: 4, min: -5.5, max: -1.5 }
-        : { x: 6, y: -4, min: 1.5, max: 5.5 };
-      const tilt = (Math.random() * (base.max - base.min) + base.min).toFixed(2);
+        ? { x: -6, y: 6 }
+        : { x: 6, y: -6 };
       const jitterX = (Math.random() * 2 - 1).toFixed(2);
-      const jitterY = (Math.random() * 2 - 1).toFixed(2);
-      element.style.setProperty("--tilt", `${tilt}deg`);
+      const jitterY = (Math.random() * 4 - 2).toFixed(2);
       element.style.setProperty("--offset-x", `${base.x + Number(jitterX)}px`);
       element.style.setProperty("--offset-y", `${base.y + Number(jitterY)}px`);
     }
@@ -686,15 +683,15 @@
         if (index % 2 === 0) {
           dishButton.classList.add("slot-left");
           cookingCard.classList.add("slot-right");
-          applyRandomTilt(dishButton, "left");
-          applyRandomTilt(cookingCard, "right");
+          applyRandomShift(dishButton, "left");
+          applyRandomShift(cookingCard, "right");
           messagesList.appendChild(dishButton);
           messagesList.appendChild(cookingCard);
         } else {
           cookingCard.classList.add("slot-left");
           dishButton.classList.add("slot-right");
-          applyRandomTilt(cookingCard, "left");
-          applyRandomTilt(dishButton, "right");
+          applyRandomShift(cookingCard, "left");
+          applyRandomShift(dishButton, "right");
           messagesList.appendChild(cookingCard);
           messagesList.appendChild(dishButton);
         }
