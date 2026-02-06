@@ -126,6 +126,16 @@
     .dish-item:active { transform: scale(0.98); }
     .dish-item:focus-visible { outline: 3px solid rgba(200,107,67,0.5); border-radius: 50%; }
 
+    .cooking-item {
+      cursor: default;
+      pointer-events: none;
+      filter: saturate(0.95);
+    }
+    .cooking-item:hover,
+    .cooking-item:active {
+      transform: none;
+    }
+
     .dish-name {
       position: absolute;
       inset: 0;
@@ -540,6 +550,7 @@
 
     function createDishButton(name, onClick, small, index) {
       const dishImages = [
+        "images/dish.png",
         "images/dish2.png",
         "images/dish3.png",
         "images/dish4.png",
@@ -556,6 +567,30 @@
       `;
       btn.addEventListener("click", onClick);
       return btn;
+    }
+
+    function createCookingCard(index, small) {
+      const cookingImages = [
+        "images/cooking.png",
+        "images/cooking2.png",
+        "images/cooking3.png",
+        "images/cooking4.png",
+        "images/cooking5.png",
+        "images/cooking6.png",
+        "images/cooking7.png",
+        "images/cooking8.png",
+        "images/cooking9.png",
+        "images/cooking10.png",
+        "images/cooking11.png"
+      ];
+      const imageSrc = cookingImages[index % cookingImages.length];
+      const card = document.createElement("div");
+      card.className = `${small ? "dish-item dish-item--small" : "dish-item"} cooking-item`;
+      card.setAttribute("aria-hidden", "true");
+      card.innerHTML = `
+        <img src="${imageSrc}" alt="" aria-hidden="true" />
+      `;
+      return card;
     }
 
     function createMenuButton(name, onClick) {
@@ -592,11 +627,19 @@
         messagesList.innerHTML = "<div class='hint'>メッセージはまだありません。</div>";
         return;
       }
+      let dishIndex = 0;
+      let cookingIndex = 0;
       items.forEach((item, index) => {
         const from = item.from;
         const message = item.message;
-        const btn = createDishButton(from, () => openMessageModal(from, message), true, index);
+        const btn = createDishButton(from, () => openMessageModal(from, message), true, dishIndex);
         messagesList.appendChild(btn);
+        dishIndex += 1;
+        if (index < items.length - 1) {
+          const cookingCard = createCookingCard(cookingIndex, true);
+          messagesList.appendChild(cookingCard);
+          cookingIndex += 1;
+        }
       });
     }
 
