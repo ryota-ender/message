@@ -538,13 +538,20 @@
       setBodyModal(false);
     }
 
-    function createDishButton(name, onClick, small) {
+    function createDishButton(name, onClick, small, index) {
+      const dishImages = [
+        "images/dish2.png",
+        "images/dish3.png",
+        "images/dish4.png",
+        "images/dish5.png"
+      ];
+      const imageSrc = dishImages[index % dishImages.length];
       const btn = document.createElement("button");
       btn.className = small ? "dish-item dish-item--small" : "dish-item";
       btn.type = "button";
       btn.setAttribute("aria-label", name);
       btn.innerHTML = `
-        <img src="images/dish.png" alt="" aria-hidden="true" />
+        <img src="${imageSrc}" alt="" aria-hidden="true" />
         <span class="dish-name">${name}</span>
       `;
       btn.addEventListener("click", onClick);
@@ -585,10 +592,10 @@
         messagesList.innerHTML = "<div class='hint'>メッセージはまだありません。</div>";
         return;
       }
-      items.forEach((item) => {
+      items.forEach((item, index) => {
         const from = item.from;
         const message = item.message;
-        const btn = createDishButton(from, () => openMessageModal(from, message), true);
+        const btn = createDishButton(from, () => openMessageModal(from, message), true, index);
         messagesList.appendChild(btn);
       });
     }
