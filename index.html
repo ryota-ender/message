@@ -136,6 +136,19 @@
       transform: none;
     }
 
+    .drink-item {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      margin: 2px 0 6px;
+    }
+    .drink-item img {
+      width: min(160px, 42vw);
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,0.15));
+    }
+
     .dish-name {
       position: absolute;
       inset: 0;
@@ -593,6 +606,16 @@
       return card;
     }
 
+    function createDrinkCard() {
+      const card = document.createElement("div");
+      card.className = "drink-item";
+      card.setAttribute("aria-hidden", "true");
+      card.innerHTML = `
+        <img src="images/drink.png" alt="" aria-hidden="true" />
+      `;
+      return card;
+    }
+
     function createMenuButton(name, onClick) {
       const btn = document.createElement("button");
       btn.className = "menu-item";
@@ -643,6 +666,10 @@
         }
         dishIndex += 1;
         cookingIndex += 1;
+        const isLast = index === items.length - 1;
+        if (!isLast && (index + 1) % 2 === 0) {
+          messagesList.appendChild(createDrinkCard());
+        }
       });
     }
 
