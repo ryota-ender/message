@@ -632,14 +632,17 @@
       items.forEach((item, index) => {
         const from = item.from;
         const message = item.message;
-        const btn = createDishButton(from, () => openMessageModal(from, message), true, dishIndex);
-        messagesList.appendChild(btn);
-        dishIndex += 1;
-        if (index < items.length - 1) {
-          const cookingCard = createCookingCard(cookingIndex, true);
+        const dishButton = createDishButton(from, () => openMessageModal(from, message), true, dishIndex);
+        const cookingCard = createCookingCard(cookingIndex, true);
+        if (index % 2 === 0) {
+          messagesList.appendChild(dishButton);
           messagesList.appendChild(cookingCard);
-          cookingIndex += 1;
+        } else {
+          messagesList.appendChild(cookingCard);
+          messagesList.appendChild(dishButton);
         }
+        dishIndex += 1;
+        cookingIndex += 1;
       });
     }
 
