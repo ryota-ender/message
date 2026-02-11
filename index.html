@@ -10,6 +10,9 @@
     :root {
       --wood-1: #6a4a2f;
       --wood-2: #3f2a1a;
+      --floor-1: #1f1b16;
+      --floor-2: #2e241d;
+      --floor-3: #3a2d23;
       --paper: #fff7ec;
       --paper-shadow: #f0e1cf;
       --ink: #3b2b21;
@@ -23,9 +26,10 @@
       margin: 0;
       color: var(--ink);
       background:
-        linear-gradient(120deg, rgba(255,255,255,0.08), rgba(0,0,0,0.08)),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 6px, rgba(0,0,0,0.03) 6px 12px),
-        linear-gradient(135deg, var(--wood-1), var(--wood-2));
+        radial-gradient(900px 500px at 20% -10%, rgba(255,244,230,0.18), transparent 60%),
+        radial-gradient(600px 400px at 90% 10%, rgba(255,210,170,0.08), transparent 55%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 10px, rgba(0,0,0,0.02) 10px 20px),
+        linear-gradient(135deg, var(--floor-1), var(--floor-2) 45%, var(--floor-3));
       font-family: "Shippori Mincho", "Noto Serif JP", serif;
       min-height: 100vh;
     }
@@ -64,6 +68,25 @@
       border: 1px solid rgba(0,0,0,0.08);
       border-radius: 12px;
       pointer-events: none;
+    }
+
+    .board.table {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.1)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 8px, rgba(0,0,0,0.06) 8px 16px),
+        linear-gradient(135deg, #7a5332, #5a3b23 60%, #4a321f);
+      border: 3px solid #3a2616;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.05);
+      color: #fff6ea;
+    }
+    .board.table:before {
+      border-color: rgba(255,255,255,0.12);
+    }
+    .board.table .menu-title,
+    .board.table #welcome,
+    .board.table .hint,
+    .board.table .error {
+      color: #fff3e1;
     }
 
     .menu-title {
@@ -340,7 +363,7 @@
       <div class="hint" id="loadStatus" role="status"></div>
     </section>
 
-    <section class="board hidden" id="messagesPanel" style="margin-top:18px;">
+    <section class="board table hidden" id="messagesPanel" style="margin-top:18px;">
       <div class="panel-head">
         <div id="welcome"></div>
       </div>
